@@ -12,9 +12,8 @@ public class TestaInsercaoComParametro {
 		Connection connection = factory.recuperarConexao();
 		connection.setAutoCommit(false);
 
-		try {
-			PreparedStatement stm = connection.prepareStatement("INSERT INTO PRODUTO (nome, descricao) VALUES (?, ?)",
-					Statement.RETURN_GENERATED_KEYS);
+		try (PreparedStatement stm = connection.prepareStatement("INSERT INTO PRODUTO (nome, descricao) VALUES (?, ?)",
+				Statement.RETURN_GENERATED_KEYS);) {
 			adcionarVariavel("SmartTV", "45 polegadas", stm);
 			adcionarVariavel("Radio", "Radio de bateria", stm);
 
@@ -40,12 +39,12 @@ public class TestaInsercaoComParametro {
 
 		stm.execute();
 
-		ResultSet rst = stm.getGeneratedKeys();
-		while (rst.next()) {
-			Integer id = rst.getInt(1);
-			System.out.println("O id criado foi: " + id);
+		try (ResultSet rst = stm.getGeneratedKeys()) {
+			while (rst.next()) {
+				Integer id = rst.getInt(1);
+				System.out.println("O id criado foi: " + id);
+			}
 		}
-		rst.close();
 	}
 
 }
